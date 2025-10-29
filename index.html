@@ -15,30 +15,37 @@
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
+
     .no-scrollbar {
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-  
+
     /* Timeline Styling */
     .timeline-dot {
-      box-shadow: 0 0 0 4px white, 0 0 10px #2A0001;
+      background: #2A0001;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      position: relative;
+      top: 2px;
+      /* Align the dot perfectly with the date text */
       z-index: 10;
       flex-shrink: 0;
     }
-  
+
     .timeline-line {
       background: #B2A8A0;
       height: 4px;
       position: absolute;
-      top: 45px;
-      left: 0;
+      top: 42px;
+      width: 100%;
       z-index: 0;
     }
-  
+
     /* Card Styling */
     .card {
-  
+
       border-radius: 0.75rem;
       overflow: hidden;
       background: white;
@@ -46,73 +53,90 @@
       flex-direction: column;
       justify-content: space-between;
     }
-  
+
     /* Timeline container */
     #timeline {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  width: 100%;
-  justify-content: space-between;
-  padding: 2rem 2.6rem; /* reduced padding */
-  position: relative;
-  box-sizing: border-box;
-}
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      width: 100%;
+      justify-content: space-between;
+      padding: 2rem 2.6rem;
+      /* reduced padding */
+      position: relative;
+      box-sizing: border-box;
+    }
 
-  
+    .timeline-date {
+      margin-top: 6px;
+    }
+
     /* Each timeline item — show 5 cards per row on desktop */
-    #timeline > div {
-  scroll-snap-align: center;
-  flex-shrink: 0;
-  width: calc(19% - 1.3rem); /* narrower so all 5 fit */
-  margin: 0 1.3rem;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+    #timeline>div {
+      scroll-snap-align: center;
+      flex-shrink: 0;
+      width: calc(19% - 1.3rem);
+      /* narrower so all 5 fit */
+      margin: 0 1.3rem;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  
+
     /* ✅ Responsive Adjustments */
     @media (max-width: 1280px) {
-      #timeline > div {
-        width: calc(25% - 2rem); /* 4 per view */
+      #timeline>div {
+        width: calc(25% - 2rem);
+        /* 4 per view */
       }
     }
-  
+
     @media (max-width: 1024px) {
-      #timeline > div {
-        width: calc(33.33% - 2rem); /* 3 per view */
+      #timeline>div {
+        width: calc(33.33% - 2rem);
+        /* 3 per view */
       }
     }
-  
+
     @media (max-width: 768px) {
       #timeline {
         padding: 1.5rem 1rem;
       }
-  
-      #timeline > div {
-        width: 80%; /* 1 per view on mobile */
+
+      #timeline>div {
+        width: 80%;
+        /* 1 per view on mobile */
         margin: 0 1rem;
       }
-  
+
       .card img {
         height: 220px;
         width: 100%;
         object-fit: cover;
         border-bottom: 1px solid #eee;
       }
-  
+
       .timeline-dot {
-        width: 1rem;
-        height: 1rem;
-        margin-bottom: 1rem;
+        background: #2A0001;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        position: relative;
+        z-index: 10;
+        margin-bottom: 10px;
       }
-  
+
+      .timeline-date {
+        margin-top: 6px;
+
+      }
+
       .timeline-line {
-        top: 50px;
+        top: 35px;
       }
-  
+
       #scrollLeft,
       #scrollRight {
         bottom: -3rem;
@@ -120,50 +144,50 @@
         width: 2.5rem;
         height: 2.5rem;
       }
-  
+
       #scrollLeft {
         left: 20%;
       }
-  
+
       #scrollRight {
         right: 20%;
       }
-  
+
       h2 {
         font-size: 1.4rem;
       }
     }
-  
+
     @media (max-width: 480px) {
-      #timeline > div {
+      #timeline>div {
         width: 90%;
         margin: 0 0.75rem;
       }
-  
+
       .card img {
         height: 180px;
       }
-  
+
       .card .p-3 {
         padding: 0.75rem;
       }
-  
+
       h4 {
         font-size: 0.9rem;
       }
-  
+
       .text-xs {
         font-size: 0.7rem;
       }
-  
+
       .timeline-dot {
-        margin-bottom: 0.75rem;
+        margin-bottom: 2rem;
       }
     }
   </style>
-  
-  
-  
+
+
+
 </head>
 
 <body class="bg-white text-[#0f254a] font-sans">
@@ -205,7 +229,7 @@
 
   <script type="module">
     const API_URL = "https://admin.chinmayamission.com/api/graphql";
-  
+
     const query = `
     query ItineraryList($filter: GetItineraryFilterInput) {
       ItineraryList(filter: $filter) {
@@ -242,16 +266,22 @@
         }
       }
     }`;
-  
+
+    // Get today's date in MM/DD/YYYY format
+    const today = new Date();
+    const formattedDate = `${today.getMonth() + 1
+      }/${today.getDate()}/${today.getFullYear()}`;
+
+
     const variables = {
       filter: {
         userId: "67a469eeeaf7c8571bdf3db1",
         userType: "Swami",
-        endDate: "10/29/2026",
-        startDate: "10/29/2025",
+        startDate: formattedDate, // dynamically set
       },
     };
-  
+
+
     async function fetchItineraryData() {
       try {
         const res = await axios.post(
@@ -259,19 +289,19 @@
           { query, variables },
           { headers: { "Content-Type": "application/json" } }
         );
-  
+
         const data = res.data.data.ItineraryList.docs;
         const timeline = document.getElementById("timeline");
-  
+
         if (!data?.length) {
           timeline.innerHTML =
             "<p class='text-gray-500 w-full text-center'>No upcoming events found.</p>";
           return;
         }
-  
+
         // ✅ Sort by fromDate ascending
         data.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate));
-  
+
         data.forEach((item) => {
           const title =
             item.eventName?.title || item.purpose || "Untitled Itinerary";
@@ -287,7 +317,7 @@
             month: "long",
             year: "numeric",
           });
-  
+
           const center = item.centerName || item.center || {};
           const centerName = center.name || "";
           const addressLines = [
@@ -300,58 +330,37 @@
             center.pincode,
           ].filter(Boolean);
           const phone = center.locationPhoneNumber || item.phoneNumber || "";
-  
+
           const card = document.createElement("div");
           card.className = "flex flex-col items-center relative";
-  
+
           card.innerHTML = `
-            <div class="flex flex-col items-left mb-6">
-              <div class="w-5 h-5 bg-[#2A0001] rounded-full timeline-dot"></div>
-              <p class="mt-4 text-sm font-medium text-gray-700 text-center whitespace-nowrap">${dateText}</p>
-            </div>
-  
-            <div class="card">
-              <img src="${image}" alt="${title}" class="rounded-lg">
-              <div class="p-3 flex flex-col justify-between flex-grow">
-                <div>
-                  <h4 class="font-semibold text-base mb-1 text-[#2A0001] leading-tight">${title}</h4>
-                  ${
-                    centerName
-                      ? `<p class="text-xs text-[#B2A8A0] font-medium mb-1">${centerName}</p>`
-                      : ""
-                  }
-                  ${
-                    addressLines.length
-                      ? `<p class="text-xs text-gray-600 leading-snug">${addressLines.join(
-                          ", "
-                        )}</p>`
-                      : ""
-                  }
-                  ${
-                    phone
-                      ? `<p class="text-xs text-gray-600 mt-1">${Array.isArray(
-                          phone
-                        )
-                          ? phone.join(", ")
-                          : phone}</p>`
-                      : ""
-                  }
-                </div>
-                ${
-                  flyer
-                    ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-[#2A0001] text-xs font-medium underline">View Flyer</a>`
-                    : ""
-                }
-              </div>
-            </div>
-          `;
-  
+  <div class="flex flex-col items-center mb-6 relative z-10">
+    <div class="timeline-dot"></div>
+    <p class="timeline-date">${dateText}</p>
+  </div>
+
+  <div class="card">
+    <img src="${image}" alt="${title}" class="rounded-lg">
+    <div class="p-3 flex flex-col justify-between flex-grow">
+      <div>
+        <h4 class="font-semibold text-base mb-1 text-[#2A0001] leading-tight">${title}</h4>
+        ${centerName ? `<p class="text-xs text-[#B2A8A0] font-medium mb-1">${centerName}</p>` : ""}
+        ${addressLines.length ? `<p class="text-xs text-gray-600 leading-snug">${addressLines.join(", ")}</p>` : ""}
+        ${phone ? `<p class="text-xs text-gray-600 mt-1">${Array.isArray(phone) ? phone.join(", ") : phone}</p>` : ""}
+      </div>
+      ${flyer ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-[#2A0001] text-xs font-medium underline">View Flyer</a>` : ""}
+    </div>
+  </div>
+`;
+
+
           timeline.appendChild(card);
         });
-  
+
         const timelineLine = timeline.querySelector(".timeline-line");
         timelineLine.style.width = `${timeline.scrollWidth}px`;
-  
+
         window.addEventListener("resize", () => {
           timelineLine.style.width = `${timeline.scrollWidth}px`;
         });
@@ -361,7 +370,7 @@
           "<p class='text-red-500 text-center'>❌ Failed to load events.</p>";
       }
     }
-  
+
     const scrollContainer = document.getElementById("timeline");
     document.getElementById("scrollLeft").onclick = () =>
       scrollContainer.scrollBy({
@@ -373,11 +382,11 @@
         left: window.innerWidth * 0.9,
         behavior: "smooth",
       });
-  
+
     fetchItineraryData();
   </script>
-  
-  
+
+
 </body>
 
 </html>
