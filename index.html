@@ -38,45 +38,51 @@
   
     /* Card Styling */
     .card {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
       border-radius: 0.75rem;
       overflow: hidden;
       background: white;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-     
     }
-  
-   
   
     /* Timeline container */
     #timeline {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      width: 100%;
-      justify-content: flex-start;
-      padding: 2rem 4rem;
-      position: relative;
-    }
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  width: 100%;
+  justify-content: space-between;
+  padding: 2rem 2.6rem; /* reduced padding */
+  position: relative;
+  box-sizing: border-box;
+}
+
   
-    /* Each timeline item */
+    /* Each timeline item — show 5 cards per row on desktop */
     #timeline > div {
-      scroll-snap-align: center;
-      flex-shrink: 0;
-      width: 260px;
-      margin: 0 2rem; /* ✅ equal gap on both sides */
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  scroll-snap-align: center;
+  flex-shrink: 0;
+  width: calc(19% - 1.3rem); /* narrower so all 5 fit */
+  margin: 0 1.3rem;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
   
     /* ✅ Responsive Adjustments */
+    @media (max-width: 1280px) {
+      #timeline > div {
+        width: calc(25% - 2rem); /* 4 per view */
+      }
+    }
+  
     @media (max-width: 1024px) {
       #timeline > div {
-        width: 240px;
-        margin: 0 1.5rem;
+        width: calc(33.33% - 2rem); /* 3 per view */
       }
     }
   
@@ -86,8 +92,8 @@
       }
   
       #timeline > div {
-        width: 85%;
-        margin: 0 1rem; /* Equal mobile gap */
+        width: 80%; /* 1 per view on mobile */
+        margin: 0 1rem;
       }
   
       .card img {
@@ -155,6 +161,7 @@
       }
     }
   </style>
+  
   
   
 </head>
@@ -240,8 +247,8 @@
       filter: {
         userId: "67a469eeeaf7c8571bdf3db1",
         userType: "Swami",
-        endDate: "10/29/2026",
-        startDate: "10/29/2025",
+        // endDate: "10/29/2026",
+        // startDate: "10/29/2025",
       },
     };
   
@@ -298,13 +305,13 @@
           card.className = "flex flex-col items-center relative";
   
           card.innerHTML = `
-            <div class="flex flex-col items-center mb-6">
+            <div class="flex flex-col items-left mb-6">
               <div class="w-5 h-5 bg-[#2A0001] rounded-full timeline-dot"></div>
               <p class="mt-4 text-sm font-medium text-gray-700 text-center whitespace-nowrap">${dateText}</p>
             </div>
   
             <div class="card">
-              <img src="${image}" alt="${title}">
+              <img src="${image}" alt="${title}" class="rounded-lg">
               <div class="p-3 flex flex-col justify-between flex-grow">
                 <div>
                   <h4 class="font-semibold text-base mb-1 text-[#2A0001] leading-tight">${title}</h4>
