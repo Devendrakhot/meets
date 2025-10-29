@@ -15,134 +15,149 @@
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
-
     .no-scrollbar {
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-
-    /* Timeline styling */
+  
+    /* Timeline Styling */
     .timeline-dot {
       box-shadow: 0 0 0 4px white, 0 0 10px #2A0001;
-      z-index: 2;
+      z-index: 10;
+      flex-shrink: 0;
     }
-
+  
     .timeline-line {
       background: #B2A8A0;
       height: 4px;
       position: absolute;
-      top: 38px;
+      top: 45px;
       left: 0;
       z-index: 0;
     }
-
-    /* Cards */
+  
+    /* Card Styling */
     .card {
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
       border-radius: 0.75rem;
       overflow: hidden;
       background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+     
     }
-
+  
+   
+  
     /* Timeline container */
     #timeline {
       display: flex;
-      gap: 3rem;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       width: 100%;
       justify-content: flex-start;
-      padding: 2rem 6rem;
+      padding: 2rem 4rem;
       position: relative;
     }
-
-    #timeline>div {
+  
+    /* Each timeline item */
+    #timeline > div {
       scroll-snap-align: center;
       flex-shrink: 0;
       width: 260px;
+      margin: 0 2rem; /* ✅ equal gap on both sides */
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-
-    /* ✅ Responsive only — keep desktop as is */
+  
+    /* ✅ Responsive Adjustments */
     @media (max-width: 1024px) {
-      #timeline {
-        gap: 2rem;
-        padding: 2rem;
-      }
-
-      #timeline>div {
+      #timeline > div {
         width: 240px;
+        margin: 0 1.5rem;
       }
     }
-
+  
     @media (max-width: 768px) {
-      /* Only 1 card visible at a time */
       #timeline {
-        gap: 0;
-        padding: 1rem;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
+        padding: 1.5rem 1rem;
       }
-
-      #timeline>div {
-        width: 90%;
-        flex-shrink: 0;
-        margin: 0 auto;
-        scroll-snap-align: center;
+  
+      #timeline > div {
+        width: 85%;
+        margin: 0 1rem; /* Equal mobile gap */
       }
-
+  
       .card img {
-        height: 200px;
+        height: 220px;
+        width: 100%;
+        object-fit: cover;
+        border-bottom: 1px solid #eee;
       }
-
-      /* Move arrows below timeline */
+  
+      .timeline-dot {
+        width: 1rem;
+        height: 1rem;
+        margin-bottom: 1rem;
+      }
+  
+      .timeline-line {
+        top: 50px;
+      }
+  
       #scrollLeft,
       #scrollRight {
-        bottom: -2.5rem;
+        bottom: -3rem;
         top: auto;
         width: 2.5rem;
         height: 2.5rem;
       }
-
+  
       #scrollLeft {
-        left: 30%;
+        left: 20%;
       }
-
+  
       #scrollRight {
-        right: 30%;
+        right: 20%;
       }
-
+  
       h2 {
-        font-size: 1.5rem;
-      }
-
-      p {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
       }
     }
-
+  
     @media (max-width: 480px) {
-      #timeline>div {
-        width: 95%;
+      #timeline > div {
+        width: 90%;
+        margin: 0 0.75rem;
       }
-
+  
       .card img {
         height: 180px;
       }
-
+  
       .card .p-3 {
         padding: 0.75rem;
       }
-
+  
       h4 {
         font-size: 0.9rem;
       }
-
+  
       .text-xs {
         font-size: 0.7rem;
       }
+  
+      .timeline-dot {
+        margin-bottom: 0.75rem;
+      }
     }
   </style>
+  
+  
 </head>
 
 <body class="bg-white text-[#0f254a] font-sans">
@@ -184,7 +199,7 @@
 
   <script type="module">
     const API_URL = "https://admin.chinmayamission.com/api/graphql";
-
+  
     const query = `
     query ItineraryList($filter: GetItineraryFilterInput) {
       ItineraryList(filter: $filter) {
@@ -221,42 +236,53 @@
         }
       }
     }`;
-
+  
     const variables = {
       filter: {
         userId: "67a469eeeaf7c8571bdf3db1",
         userType: "Swami",
-        endDate:"10/29/2026",
-        startDate:"10/29/2025"
-      }
+        endDate: "10/29/2026",
+        startDate: "10/29/2025",
+      },
     };
-
+  
     async function fetchItineraryData() {
       try {
-        const res = await axios.post(API_URL, { query, variables }, {
-          headers: { "Content-Type": "application/json" }
-        });
-
+        const res = await axios.post(
+          API_URL,
+          { query, variables },
+          { headers: { "Content-Type": "application/json" } }
+        );
+  
         const data = res.data.data.ItineraryList.docs;
         const timeline = document.getElementById("timeline");
-
+  
         if (!data?.length) {
-          timeline.innerHTML = "<p class='text-gray-500 w-full text-center'>No upcoming events found.</p>";
+          timeline.innerHTML =
+            "<p class='text-gray-500 w-full text-center'>No upcoming events found.</p>";
           return;
         }
-
-        data.forEach(item => {
-          const title = item.eventName?.title || "Untitled Event";
-          const image = item.eventName?.image?.url || item.flyer?.url;
+  
+        // ✅ Sort by fromDate ascending
+        data.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate));
+  
+        data.forEach((item) => {
+          const title =
+            item.eventName?.title || item.purpose || "Untitled Itinerary";
+          const image =
+            item.eventName?.image?.url ||
+            item.flyer?.url ||
+            item.image?.url ||
+            "https://via.placeholder.com/400x250?text=No+Image";
           const flyer = item.flyer?.url;
           const fromDate = new Date(item.fromDate);
           const dateText = fromDate.toLocaleDateString("en-GB", {
             day: "numeric",
             month: "long",
-            year: "numeric"
+            year: "numeric",
           });
-
-          const center = item.centerName || {};
+  
+          const center = item.centerName || item.center || {};
           const centerName = center.name || "";
           const addressLines = [
             center.address1,
@@ -265,58 +291,87 @@
             center.city,
             center.state,
             center.country,
-            center.pincode
+            center.pincode,
           ].filter(Boolean);
-          const phone = center.locationPhoneNumber || "";
-
+          const phone = center.locationPhoneNumber || item.phoneNumber || "";
+  
           const card = document.createElement("div");
-          card.className = "flex flex-col items-left relative";
-
+          card.className = "flex flex-col items-center relative";
+  
           card.innerHTML = `
-            <div class="relative flex flex-col items-center mb-8">
-              <div class="w-5 h-5 bg-[#2A0001] rounded-full timeline-dot z-10"></div>
-              <p class="mt-8 text-sm font-medium text-gray-700 text-center whitespace-nowrap">${dateText}</p>
+            <div class="flex flex-col items-center mb-6">
+              <div class="w-5 h-5 bg-[#2A0001] rounded-full timeline-dot"></div>
+              <p class="mt-4 text-sm font-medium text-gray-700 text-center whitespace-nowrap">${dateText}</p>
             </div>
-
-            <div class="card overflow-hidden rounded-lg">
-              <img src="${image}" alt="${title}" class="w-full h-36 object-cover rounded-lg">
+  
+            <div class="card">
+              <img src="${image}" alt="${title}">
               <div class="p-3 flex flex-col justify-between flex-grow">
                 <div>
                   <h4 class="font-semibold text-base mb-1 text-[#2A0001] leading-tight">${title}</h4>
-                  ${centerName ? `<p class="text-xs text-[#B2A8A0] font-medium mb-1">${centerName}</p>` : ""}
-                  ${addressLines.length ? `<p class="text-xs text-gray-600 leading-snug">${addressLines.join(", ")}</p>` : ""}
-                  ${phone ? `<p class="text-xs text-gray-600 mt-1">${phone}</p>` : ""}
+                  ${
+                    centerName
+                      ? `<p class="text-xs text-[#B2A8A0] font-medium mb-1">${centerName}</p>`
+                      : ""
+                  }
+                  ${
+                    addressLines.length
+                      ? `<p class="text-xs text-gray-600 leading-snug">${addressLines.join(
+                          ", "
+                        )}</p>`
+                      : ""
+                  }
+                  ${
+                    phone
+                      ? `<p class="text-xs text-gray-600 mt-1">${Array.isArray(
+                          phone
+                        )
+                          ? phone.join(", ")
+                          : phone}</p>`
+                      : ""
+                  }
                 </div>
-                ${flyer ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-[#2A0001] text-xs font-medium underline"> View Flyer</a>` : ""}
+                ${
+                  flyer
+                    ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-[#2A0001] text-xs font-medium underline">View Flyer</a>`
+                    : ""
+                }
               </div>
             </div>
           `;
-
+  
           timeline.appendChild(card);
         });
-
+  
         const timelineLine = timeline.querySelector(".timeline-line");
         timelineLine.style.width = `${timeline.scrollWidth}px`;
-
+  
         window.addEventListener("resize", () => {
           timelineLine.style.width = `${timeline.scrollWidth}px`;
         });
-
       } catch (err) {
         console.error("GraphQL fetch failed:", err);
         document.getElementById("timeline").innerHTML =
           "<p class='text-red-500 text-center'>❌ Failed to load events.</p>";
       }
     }
-
+  
     const scrollContainer = document.getElementById("timeline");
     document.getElementById("scrollLeft").onclick = () =>
-      scrollContainer.scrollBy({ left: -window.innerWidth * 0.9, behavior: "smooth" });
+      scrollContainer.scrollBy({
+        left: -window.innerWidth * 0.9,
+        behavior: "smooth",
+      });
     document.getElementById("scrollRight").onclick = () =>
-      scrollContainer.scrollBy({ left: window.innerWidth * 0.9, behavior: "smooth" });
-
+      scrollContainer.scrollBy({
+        left: window.innerWidth * 0.9,
+        behavior: "smooth",
+      });
+  
     fetchItineraryData();
   </script>
+  
+  
 </body>
 
 </html>
