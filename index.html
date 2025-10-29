@@ -269,15 +269,30 @@
 
     // Get today's date in MM/DD/YYYY format
     const today = new Date();
-    const formattedDate = `${today.getMonth() + 1
-      }/${today.getDate()}/${today.getFullYear()}`;
 
+    // Format helper (MM/DD/YYYY)
+    const formatDate = (date) => {
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      const yyyy = date.getFullYear();
+      return `${mm}/${dd}/${yyyy}`;
+    };
 
+    // Start date = today
+    const startDate = formatDate(today);
+
+    // End date = exactly 1 year from today
+    const nextYear = new Date(today);
+    nextYear.setFullYear(today.getFullYear() + 1);
+    const endDate = formatDate(nextYear);
+
+    // Use in GraphQL variables
     const variables = {
       filter: {
         userId: "67a469eeeaf7c8571bdf3db1",
         userType: "Swami",
-        startDate: formattedDate, // dynamically set
+        startDate: startDate,
+        endDate: endDate,
       },
     };
 
