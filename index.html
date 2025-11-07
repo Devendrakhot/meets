@@ -1,407 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meet Swamiji | Chinmaya Mission</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meet Swamiji | Chinmaya Mission</title>
+    <!-- Tailwind + Axios -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-  <!-- Tailwind & Axios -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Lexend:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <style>
-    /* Hide Scrollbar */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    /* Timeline Styling */
-    .timeline-dot {
-      background: #2A0001;
-      width: 1.25rem;
-      height: 1.25rem;
-      border-radius: 50%;
-      position: relative;
-      top: 2px;
-      /* Align the dot perfectly with the date text */
-      z-index: 10;
-      flex-shrink: 0;
-    }
-
-    .timeline-line {
-      background: #B2A8A0;
-      height: 4px;
-      position: absolute;
-      top: 42px;
-      width: 100%;
-      z-index: 0;
-    }
-
-    /* Card Styling */
-    .card {
-
-      border-radius: 0.75rem;
-      overflow: hidden;
-      background: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    /* Timeline container */
-    #timeline {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      width: 100%;
-      justify-content: space-between;
-      padding: 2rem 2.6rem;
-      /* reduced padding */
-      position: relative;
-      box-sizing: border-box;
-    }
-
-    .timeline-date {
-      margin-top: 6px;
-    }
-
-    /* Each timeline item — show 5 cards per row on desktop */
-    #timeline>div {
-      scroll-snap-align: center;
-      flex-shrink: 0;
-      width: calc(19% - 1.3rem);
-      /* narrower so all 5 fit */
-      margin: 0 1.3rem;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-
-    /* ✅ Responsive Adjustments */
-    @media (max-width: 1280px) {
-      #timeline>div {
-        width: calc(25% - 2rem);
-        /* 4 per view */
-      }
-    }
-
-    @media (max-width: 1024px) {
-      #timeline>div {
-        width: calc(33.33% - 2rem);
-        /* 3 per view */
-      }
-    }
-
-    @media (max-width: 768px) {
-      #timeline {
-        padding: 1.5rem 1rem;
+    <style>
+      :root {
+        --primary: #2a0001;
+        --secondary: #daa864;
       }
 
-      #timeline>div {
-        width: 80%;
-        /* 1 per view on mobile */
-        margin: 0 1rem;
+      body {
+        font-family: "Lexend", sans-serif;
+        background-color: #fffdf9;
+        color: var(--primary);
       }
 
-      .card img {
-        height: 220px;
-        width: 100%;
-        object-fit: cover;
-        border-bottom: 1px solid #eee;
+      .font-primary {
+        font-family: "Philosopher", sans-serif;
       }
 
+      .font-secondary {
+        font-family: "Lexend", sans-serif;
+      }
+
+      .text-primary {
+        color: var(--primary);
+      }
+
+      .text-secondary {
+        color: var(--secondary);
+      }
+
+      /* --- Timeline Styles --- */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
       .timeline-dot {
-        background: #2A0001;
-        width: 18px;
-        height: 18px;
+        background: var(--primary);
+        width: 1.25rem;
+        height: 1.25rem;
         border-radius: 50%;
         position: relative;
+        top: 2px;
         z-index: 10;
-        margin-bottom: 10px;
+        flex-shrink: 0;
       }
-
-      .timeline-date {
-        margin-top: 6px;
-
-      }
-
       .timeline-line {
-        top: 35px;
+        background: #b2a8a0;
+        height: 4px;
+        position: absolute;
+        top: 42px;
+        width: 100%;
+        z-index: 0;
+      }
+      .card {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      #timeline {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        width: 100%;
+        justify-content: space-between;
+        padding: 2rem 2.6rem;
+        position: relative;
+        box-sizing: border-box;
+      }
+      #timeline > div {
+        scroll-snap-align: center;
+        flex-shrink: 0;
+        width: calc(19% - 1.3rem);
+        margin: 0 1.3rem;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
-      #scrollLeft,
-      #scrollRight {
-        bottom: -3rem;
-        top: auto;
-        width: 2.5rem;
-        height: 2.5rem;
+      /* --- Responsive --- */
+      @media (max-width: 1280px) {
+        #timeline > div {
+          width: calc(25% - 2rem);
+        }
       }
-
-      #scrollLeft {
-        left: 20%;
+      @media (max-width: 1024px) {
+        #timeline > div {
+          width: calc(33.33% - 2rem);
+        }
       }
-
-      #scrollRight {
-        right: 20%;
+      @media (max-width: 768px) {
+        #timeline {
+          padding: 1.5rem 1rem;
+        }
+        #timeline > div {
+          width: 80%;
+          margin: 0 1rem;
+        }
+        .card img {
+          height: 220px;
+          object-fit: cover;
+        }
+        .timeline-dot {
+          width: 18px;
+          height: 18px;
+        }
+        #scrollLeft,
+        #scrollRight {
+          bottom: -3rem;
+          top: auto;
+          width: 2.5rem;
+          height: 2.5rem;
+        }
       }
-
-      h2 {
-        font-size: 1.4rem;
+      @media (max-width: 480px) {
+        #timeline > div {
+          width: 90%;
+          margin: 0 0.75rem;
+        }
+        .card img {
+          height: 180px;
+        }
       }
-    }
+    </style>
+  </head>
 
-    @media (max-width: 480px) {
-      #timeline>div {
-        width: 90%;
-        margin: 0 0.75rem;
-      }
+  <body>
+    <!-- 🟤 PROFILE SECTION -->
+    <section class="my-container pt-20 pb-10 md:py-20">
+      <div class="md:flex justify-center gap-[60px] items-stretch">
+        <!-- Image -->
+        <div
+          class="max-w-[600px] flex-1 aspect-[3/2] flex items-center justify-center"
+        >
+          <img
+            src="https://images.chinmayamission.com/uploads/cropped_S_Wami_S_Waroopananda_for_homepage_88048d9b86.webp"
+            alt="Swami Swaroopananda"
+            class="rounded-3xl object-cover w-full h-full shadow-[8px_8px_4px_rgba(0,0,0,0.16)]"
+          />
+        </div>
 
-      .card img {
-        height: 180px;
-      }
+        <!-- Content -->
+        <div
+          class="max-w-[652px] flex flex-col justify-between flex-1 mt-6 md:mt-0 py-4"
+        >
+          <div class="flex flex-col gap-4">
+            <h4
+              class="tracking-[0.01em] text-primary text-start font-bold text-2xl md:text-[40px] md:leading-[46px] font-primary"
+            >
+              Swami Swaroopananda
+            </h4>
 
-      .card .p-3 {
-        padding: 0.75rem;
-      }
+            <p
+              class="text-secondary text-start font-semibold text-base md:text-xl font-secondary uppercase"
+            >
+              Global Head
+            </p>
 
-      h4 {
-        font-size: 0.9rem;
-      }
+            <p
+              class="text-primary text-start text-sm md:text-lg font-secondary md:leading-7 text-justify"
+            >
+              From a devoted student of Chinmaya Mission to becoming its Global
+              Head, Swami Swaroopananda’s journey is a testament to dedication,
+              wisdom, and compassionate leadership guiding the Mission
+              worldwide. Swamiji travels extensively around the world, leading a
+              busy teaching schedule alongside annual family and youth camps.
+              His warmth and innate talent for connecting with people from all
+              walks of life make him a beloved leader in sharing the timeless
+              wisdom of oneness.
+            </p>
+          </div>
 
-      .text-xs {
-        font-size: 0.7rem;
-      }
+          <div class="flex items-center gap-6 mt-6">
+            <strong
+              class="text-primary text-start font-bold text-xl md:text-2xl font-primary"
+              >Follow on</strong
+            >
+            <div class="flex gap-4">
+              <a
+                target="_blank"
+                href="https://www.facebook.com/share/16YxYGW9pH/?mibextid=wwXIfr"
+              >
+                <img
+                  src="https://www.chinmayamission.com/images/Home-page/facebook.svg"
+                  alt="Facebook"
+                  class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300"
+                />
+              </a>
+              <a
+                target="_blank"
+                href="https://www.instagram.com/swamiswaroopananda?igsh=aTFzOXpjMmdkY3kw"
+              >
+                <img
+                  src="https://www.chinmayamission.com/images/Home-page/instagram.svg"
+                  alt="Instagram"
+                  class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300"
+                />
+              </a>
+              <a target="_blank" href="https://x.com/swswaroopananda?s=21">
+                <img
+                  src="https://www.chinmayamission.com/images/Home-page/twitter.svg"
+                  alt="Twitter"
+                  class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300"
+                />
+              </a>
+              <a
+                target="_blank"
+                href="https://whatsapp.com/channel/0029Val828lDZ4LhFJxe801v"
+              >
+                <img
+                  src="https://www.chinmayamission.com/images/Home-page/whatsAppIcon.svg"
+                  alt="WhatsApp"
+                  class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      .timeline-dot {
-        margin-bottom: 2rem;
-      }
-    }
-  </style>
-
-
-
-</head>
-
-<body class="bg-white text-[#0f254a] font-sans">
-  <section class="py-16 w-full">
-    <!-- Header -->
-    <div class="text-center mb-10 px-6">
-      <h2 class="text-3xl font-bold flex items-center justify-center gap-2 text-[#2A0001]">
-        <span class="text-orange-500 text-2xl">✦</span>
-        Meet Swamiji
-        <span class="text-orange-500 text-2xl">✦</span>
-      </h2>
-      <p class="text-gray-600 mt-3 max-w-3xl mx-auto text-lg">
-        Join Swami Swaroopananda for life-changing camps, meditation courses, and Vedanta talks held across various
-        locations around the world.
-      </p>
-    </div>
-
-    <!-- Timeline -->
-    <div class="relative max-w-[1600px] mx-auto flex items-center justify-center w-full">
-      <!-- Left Arrow -->
-      <button id="scrollLeft"
-        class="absolute left-2 lg:left-0 z-20 bg-white border border-orange-400 text-orange-500 w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-orange-50 transition">
-        ←
-      </button>
-
-      <!-- Scrollable container -->
-      <div id="timeline" class="no-scrollbar scroll-smooth">
-        <!-- Timeline line -->
-        <div class="timeline-line"></div>
+    <!-- 🟤 MEET SWAMIJI SECTION -->
+    <section class="py-16 w-full">
+      <!-- Header -->
+      <div class="text-center mb-10 px-6">
+        <h2
+          class="text-3xl font-primary font-bold flex items-center justify-center gap-2 text-primary"
+        >
+          <span class="text-secondary text-2xl">✦</span>
+          Meet Swamiji
+          <span class="text-secondary text-2xl">✦</span>
+        </h2>
+        <p
+          class="text-[#4b3b3b] mt-3 max-w-3xl mx-auto text-lg font-secondary"
+        >
+          Join Swami Swaroopananda for life-changing camps, meditation courses,
+          and Vedanta talks held across various locations worldwide.
+        </p>
       </div>
 
-      <!-- Right Arrow -->
-      <button id="scrollRight"
-        class="absolute right-2 lg:right-0 z-20 bg-white border border-orange-400 text-orange-500 w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-orange-50 transition">
-        →
-      </button>
-    </div>
-  </section>
+      <!-- Timeline -->
+      <div
+        class="relative max-w-[1600px] mx-auto flex items-center justify-center w-full"
+      >
+        <!-- Left Arrow -->
+        <button
+          id="scrollLeft"
+          class="absolute left-2 lg:left-0 z-20 bg-white border border-[var(--secondary)] text-[var(--secondary)] w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-[#fff8ef] transition"
+        >
+          ←
+        </button>
 
-  <script type="module">
-    const API_URL = "https://admin.chinmayamission.com/api/graphql";
+        <!-- Scrollable Container -->
+        <div id="timeline" class="no-scrollbar scroll-smooth">
+          <div class="timeline-line"></div>
+        </div>
 
-    const query = `
-    query ItineraryList($filter: GetItineraryFilterInput) {
-      ItineraryList(filter: $filter) {
-        docs {
-          id
-          image { url }
-          itineraryType
-          userType
-          purpose
-          venue
-          center { name slug address1 address2 address3 pincode country state city locationPhoneNumber }
-          fromDate
-          toDate
-          country
-          state
-          city
-          address
-          phoneNumber
-          status
-          slug
-          updatedAt
-          createdAt
-          eventName {
+        <!-- Right Arrow -->
+        <button
+          id="scrollRight"
+          class="absolute right-2 lg:right-0 z-20 bg-white border border-[var(--secondary)] text-[var(--secondary)] w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-[#fff8ef] transition"
+        >
+          →
+        </button>
+      </div>
+    </section>
+
+    <!-- 🟤 JS: Fetch Itinerary Data -->
+    <script type="module">
+      const API_URL = "https://admin.chinmayamission.com/api/graphql";
+
+      const query = `
+      query ItineraryList($filter: GetItineraryFilterInput) {
+        ItineraryList(filter: $filter) {
+          docs {
             id
             image { url }
-            title
+            purpose
+            center { name address1 address2 city state country pincode locationPhoneNumber }
+            fromDate
+            flyer { url }
+            eventName { title image { url } }
           }
-          fromTime
-          toTime
-          duration
-          centerName { name slug address1 address2 address3 pincode country state city locationPhoneNumber }
-          flyer { url }
-          userName { id slug type title }
         }
-      }
-    }`;
+      }`;
 
-    // Get today's date in MM/DD/YYYY format
-    const today = new Date();
+      const today = new Date();
+      const formatDate = (date) => {
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        const yyyy = date.getFullYear();
+        return `${mm}/${dd}/${yyyy}`;
+      };
+      const startDate = formatDate(today);
+      const nextYear = new Date(today);
+      nextYear.setFullYear(today.getFullYear() + 1);
+      const endDate = formatDate(nextYear);
 
-    // Format helper (MM/DD/YYYY)
-    const formatDate = (date) => {
-      const mm = String(date.getMonth() + 1).padStart(2, "0");
-      const dd = String(date.getDate()).padStart(2, "0");
-      const yyyy = date.getFullYear();
-      return `${mm}/${dd}/${yyyy}`;
-    };
+      const variables = {
+        filter: {
+          userId: "67a469eeeaf7c8571bdf3db1",
+          userType: "Swami",
+          startDate,
+          endDate,
+        },
+      };
 
-    // Start date = today
-    const startDate = formatDate(today);
+      async function fetchItineraryData() {
+        try {
+          const res = await axios.post(
+            API_URL,
+            { query, variables },
+            { headers: { "Content-Type": "application/json" } }
+          );
+          const data = res.data.data.ItineraryList.docs;
+          const timeline = document.getElementById("timeline");
 
-    // End date = exactly 1 year from today
-    const nextYear = new Date(today);
-    nextYear.setFullYear(today.getFullYear() + 1);
-    const endDate = formatDate(nextYear);
+          if (!data?.length) {
+            timeline.innerHTML =
+              "<p class='text-gray-500 w-full text-center'>No upcoming events found.</p>";
+            return;
+          }
 
-    // Use in GraphQL variables
-    const variables = {
-      filter: {
-        userId: "67a469eeeaf7c8571bdf3db1",
-        userType: "Swami",
-        startDate: startDate,
-        endDate: endDate,
-      },
-    };
+          data.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate));
 
+          data.forEach((item) => {
+            const title = item.eventName?.title || item.purpose || "Untitled";
+            const image =
+              item.eventName?.image?.url ||
+              item.flyer?.url ||
+              item.image?.url ||
+              "https://via.placeholder.com/400x250?text=No+Image";
+            const flyer = item.flyer?.url;
+            const dateText = new Date(item.fromDate).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            });
 
-    async function fetchItineraryData() {
-      try {
-        const res = await axios.post(
-          API_URL,
-          { query, variables },
-          { headers: { "Content-Type": "application/json" } }
-        );
+            const center = item.center || {};
+            const centerName = center.name || "";
+            const addressLines = [
+              center.address1,
+              center.address2,
+              center.city,
+              center.state,
+              center.country,
+              center.pincode,
+            ].filter(Boolean);
+            const phone = center.locationPhoneNumber || "";
 
-        const data = res.data.data.ItineraryList.docs;
-        const timeline = document.getElementById("timeline");
+            const card = document.createElement("div");
+            card.className = "flex flex-col items-center relative";
 
-        if (!data?.length) {
-          timeline.innerHTML =
-            "<p class='text-gray-500 w-full text-center'>No upcoming events found.</p>";
-          return;
-        }
+            card.innerHTML = `
+              <div class="flex flex-col items-center mb-6 relative z-10">
+                <div class="timeline-dot"></div>
+                <p class="timeline-date text-sm font-secondary">${dateText}</p>
+              </div>
+              <div class="card">
+                <img src="${image}" alt="${title}" class="rounded-lg">
+                <div class="p-3 flex flex-col justify-between flex-grow">
+                  <div>
+                    <h4 class="font-semibold text-base mb-1 text-primary leading-tight font-primary">${title}</h4>
+                    ${
+                      centerName
+                        ? `<p class="text-xs text-secondary font-medium mb-1">${centerName}</p>`
+                        : ""
+                    }
+                    ${
+                      addressLines.length
+                        ? `<p class="text-xs text-gray-600 leading-snug">${addressLines.join(
+                            ", "
+                          )}</p>`
+                        : ""
+                    }
+                    ${
+                      phone
+                        ? `<p class="text-xs text-gray-600 mt-1">${Array.isArray(phone) ? phone.join(", ") : phone}</p>`
+                        : ""
+                    }
+                  </div>
+                  ${
+                    flyer
+                      ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-secondary text-xs font-medium underline">View Flyer</a>`
+                      : ""
+                  }
+                </div>
+              </div>
+            `;
 
-        // ✅ Sort by fromDate ascending
-        data.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate));
-
-        data.forEach((item) => {
-          const title =
-            item.eventName?.title || item.purpose || "Untitled Itinerary";
-          const image =
-            item.eventName?.image?.url ||
-            item.flyer?.url ||
-            item.image?.url ||
-            "https://via.placeholder.com/400x250?text=No+Image";
-          const flyer = item.flyer?.url;
-          const fromDate = new Date(item.fromDate);
-          const dateText = fromDate.toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
+            timeline.appendChild(card);
           });
 
-          const center = item.centerName || item.center || {};
-          const centerName = center.name || "";
-          const addressLines = [
-            center.address1,
-            center.address2,
-            center.address3,
-            center.city,
-            center.state,
-            center.country,
-            center.pincode,
-          ].filter(Boolean);
-          const phone = center.locationPhoneNumber || item.phoneNumber || "";
-
-          const card = document.createElement("div");
-          card.className = "flex flex-col items-center relative";
-
-          card.innerHTML = `
-  <div class="flex flex-col items-center mb-6 relative z-10">
-    <div class="timeline-dot"></div>
-    <p class="timeline-date">${dateText}</p>
-  </div>
-
-  <div class="card">
-    <img src="${image}" alt="${title}" class="rounded-lg">
-    <div class="p-3 flex flex-col justify-between flex-grow">
-      <div>
-        <h4 class="font-semibold text-base mb-1 text-[#2A0001] leading-tight">${title}</h4>
-        ${centerName ? `<p class="text-xs text-[#B2A8A0] font-medium mb-1">${centerName}</p>` : ""}
-        ${addressLines.length ? `<p class="text-xs text-gray-600 leading-snug">${addressLines.join(", ")}</p>` : ""}
-        ${phone ? `<p class="text-xs text-gray-600 mt-1">${Array.isArray(phone) ? phone.join(", ") : phone}</p>` : ""}
-      </div>
-      ${flyer ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-[#2A0001] text-xs font-medium underline">View Flyer</a>` : ""}
-    </div>
-  </div>
-`;
-
-
-          timeline.appendChild(card);
-        });
-
-        const timelineLine = timeline.querySelector(".timeline-line");
-        timelineLine.style.width = `${timeline.scrollWidth}px`;
-
-        window.addEventListener("resize", () => {
+          const timelineLine = timeline.querySelector(".timeline-line");
           timelineLine.style.width = `${timeline.scrollWidth}px`;
-        });
-      } catch (err) {
-        console.error("GraphQL fetch failed:", err);
-        document.getElementById("timeline").innerHTML =
-          "<p class='text-red-500 text-center'>❌ Failed to load events.</p>";
+          window.addEventListener("resize", () => {
+            timelineLine.style.width = `${timeline.scrollWidth}px`;
+          });
+        } catch (err) {
+          console.error("GraphQL fetch failed:", err);
+          document.getElementById("timeline").innerHTML =
+            "<p class='text-red-500 text-center'>❌ Failed to load events.</p>";
+        }
       }
-    }
 
-    const scrollContainer = document.getElementById("timeline");
-    document.getElementById("scrollLeft").onclick = () =>
-      scrollContainer.scrollBy({
-        left: -window.innerWidth * 0.9,
-        behavior: "smooth",
-      });
-    document.getElementById("scrollRight").onclick = () =>
-      scrollContainer.scrollBy({
-        left: window.innerWidth * 0.9,
-        behavior: "smooth",
-      });
+      const scrollContainer = document.getElementById("timeline");
+      document.getElementById("scrollLeft").onclick = () =>
+        scrollContainer.scrollBy({
+          left: -window.innerWidth * 0.9,
+          behavior: "smooth",
+        });
+      document.getElementById("scrollRight").onclick = () =>
+        scrollContainer.scrollBy({
+          left: window.innerWidth * 0.9,
+          behavior: "smooth",
+        });
 
-    fetchItineraryData();
-  </script>
-
-
-</body>
-
+      fetchItineraryData();
+    </script>
+  </body>
 </html>
