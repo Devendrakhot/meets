@@ -198,34 +198,42 @@
   </section>
 
   <!-- 🌍 Swamiji's Event Timeline -->
-  <section class="py-16 w-full ">
+  <section class="py-16 w-full">
+    <!-- Header -->
     <div class="text-center mb-10 px-6">
-      <h2 class="text-3xl font-bold flex items-center justify-center gap-2 font-primary">
-        <span class="text-secondary text-2xl">✦</span>
+      <h2 class="text-3xl font-bold flex items-center justify-center gap-2 text-[#2A0001]">
+        <span class="text-orange-500 text-2xl">✦</span>
         Meet Swamiji
-        <span class="text-secondary text-2xl">✦</span>
+        <span class="text-orange-500 text-2xl">✦</span>
       </h2>
-      <p class="text-secondary mt-3 max-w-3xl mx-auto text-lg font-[Lexend]">
-        Join Swami Swaroopananda for life-changing camps, meditation courses, and Vedanta talks across the world.
+      <p class="text-gray-600 mt-3 max-w-3xl mx-auto text-lg">
+        Join Swami Swaroopananda for life-changing camps, meditation courses, and Vedanta talks held across various
+        locations around the world.
       </p>
     </div>
 
+    <!-- Timeline -->
     <div class="relative max-w-[1600px] mx-auto flex items-center justify-center w-full">
+      <!-- Left Arrow -->
       <button id="scrollLeft"
-        class="absolute left-2 lg:left-0 z-20 bg-white border border-[#DAA864] text-[#2A0001] w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-[#fff6ed] transition">
+        class="absolute left-2 lg:left-0 z-20 bg-white border border-orange-400 text-orange-500 w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-orange-50 transition">
         ←
       </button>
 
+      <!-- Scrollable container -->
       <div id="timeline" class="no-scrollbar scroll-smooth">
+        <!-- Timeline line -->
         <div class="timeline-line"></div>
       </div>
 
+      <!-- Right Arrow -->
       <button id="scrollRight"
-        class="absolute right-2 lg:right-0 z-20 bg-white border border-[#DAA864] text-[#2A0001] w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-[#fff6ed] transition">
+        class="absolute right-2 lg:right-0 z-20 bg-white border border-orange-400 text-orange-500 w-8 h-8 rounded-full flex items-center justify-center shadow hover:bg-orange-50 transition">
         →
       </button>
     </div>
   </section>
+
 
   <!-- ======================= -->
   <!-- 🔹 FETCH DATA SCRIPTS 🔹 -->
