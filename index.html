@@ -308,8 +308,7 @@
     loadSwamijiProfile();
   </script>
 
-  <script type="module">
-    /* === Itinerary Timeline Fetch === */
+<script type="module">
     const API_URL = "https://admin.chinmayamission.com/api/graphql";
 
     const query = `
@@ -324,14 +323,35 @@
           venue
           center { name slug address1 address2 address3 pincode country state city locationPhoneNumber }
           fromDate
-          flyer { url }
-          eventName { id image { url } title }
+          toDate
+          country
+          state
+          city
+          address
+          phoneNumber
+          status
+          slug
+          updatedAt
+          createdAt
+          eventName {
+            id
+            image { url }
+            title
+          }
+          fromTime
+          toTime
+          duration
           centerName { name slug address1 address2 address3 pincode country state city locationPhoneNumber }
+          flyer { url }
+          userName { id slug type title }
         }
       }
     }`;
 
+    // Get today's date in MM/DD/YYYY format
     const today = new Date();
+
+    // Format helper (MM/DD/YYYY)
     const formatDate = (date) => {
       const mm = String(date.getMonth() + 1).padStart(2, "0");
       const dd = String(date.getDate()).padStart(2, "0");
@@ -339,83 +359,127 @@
       return `${mm}/${dd}/${yyyy}`;
     };
 
+    // Start date = today
     const startDate = formatDate(today);
+
+    // End date = exactly 1 year from today
     const nextYear = new Date(today);
     nextYear.setFullYear(today.getFullYear() + 1);
     const endDate = formatDate(nextYear);
 
+    // Use in GraphQL variables
     const variables = {
       filter: {
         userId: "67a469eeeaf7c8571bdf3db1",
         userType: "Swami",
-        startDate,
-        endDate,
+        startDate: startDate,
+        endDate: endDate,
       },
     };
 
+
     async function fetchItineraryData() {
       try {
-        const res = await axios.post(API_URL, { query, variables });
+        const res = await axios.post(
+          API_URL,
+          { query, variables },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
         const data = res.data.data.ItineraryList.docs;
         const timeline = document.getElementById("timeline");
 
         if (!data?.length) {
-          timeline.innerHTML = "<p class='text-secondary w-full text-center'>No upcoming events found.</p>";
+          timeline.innerHTML =
+            "<p class='text-gray-500 w-full text-center'>No upcoming events found.</p>";
           return;
         }
 
+        // ✅ Sort by fromDate ascending
         data.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate));
 
         data.forEach((item) => {
-          const title = item.eventName?.title || item.purpose || "Untitled Itinerary";
-          const image = item.eventName?.image?.url || item.flyer?.url || item.image?.url ||
+          const title =
+            item.eventName?.title || item.purpose || "Untitled Itinerary";
+          const image =
+            item.eventName?.image?.url ||
+            item.flyer?.url ||
+            item.image?.url ||
             "https://via.placeholder.com/400x250?text=No+Image";
           const flyer = item.flyer?.url;
-          const dateText = new Date(item.fromDate).toLocaleDateString("en-GB", {
-            day: "numeric", month: "long", year: "numeric"
+          const fromDate = new Date(item.fromDate);
+          const dateText = fromDate.toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
           });
 
           const center = item.centerName || item.center || {};
           const centerName = center.name || "";
-
           const addressLines = [
-            center.address1, center.address2, center.address3, center.city, center.state, center.country, center.pincode,
+            center.address1,
+            center.address2,
+            center.address3,
+            center.city,
+            center.state,
+            center.country,
+            center.pincode,
           ].filter(Boolean);
+          const phone = center.locationPhoneNumber || item.phoneNumber || "";
 
           const card = document.createElement("div");
           card.className = "flex flex-col items-center relative";
+
           card.innerHTML = `
-            <div class="flex flex-col items-center mb-6 relative z-10">
-              <div class="timeline-dot"></div>
-              <p class="timeline-date text-secondary">${dateText}</p>
-            </div>
-            <div class="card">
-              <img src="${image}" alt="${title}" class="rounded-lg">
-              <div class="p-3 flex flex-col justify-between flex-grow">
-                <div>
-                  <h4 class="font-semibold text-base mb-1 text-primary leading-tight font-primary">${title}</h4>
-                  ${centerName ? `<p class="text-xs text-secondary font-medium mb-1">${centerName}</p>` : ""}
-                  ${addressLines.length ? `<p class="text-xs text-[#5b4c46] leading-snug">${addressLines.join(", ")}</p>` : ""}
-                </div>
-                ${flyer ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-primary text-xs font-medium underline">View Flyer</a>` : ""}
-              </div>
-            </div>
-          `;
+  <div class="flex flex-col items-center mb-6 relative z-10">
+    <div class="timeline-dot"></div>
+    <p class="timeline-date">${dateText}</p>
+  </div>
+
+  <div class="card">
+    <img src="${image}" alt="${title}" class="rounded-lg">
+    <div class="p-3 flex flex-col justify-between flex-grow">
+      <div>
+        <h4 class="font-semibold text-base mb-1 text-[#2A0001] leading-tight">${title}</h4>
+        ${centerName ? `<p class="text-xs text-[#B2A8A0] font-medium mb-1">${centerName}</p>` : ""}
+        ${addressLines.length ? `<p class="text-xs text-gray-600 leading-snug">${addressLines.join(", ")}</p>` : ""}
+        ${phone ? `<p class="text-xs text-gray-600 mt-1">${Array.isArray(phone) ? phone.join(", ") : phone}</p>` : ""}
+      </div>
+      ${flyer ? `<a href="${flyer}" target="_blank" class="inline-block mt-2 text-[#2A0001] text-xs font-medium underline">View Flyer</a>` : ""}
+    </div>
+  </div>
+`;
+
+
           timeline.appendChild(card);
         });
+
+        const timelineLine = timeline.querySelector(".timeline-line");
+        timelineLine.style.width = `${timeline.scrollWidth}px`;
+
+        window.addEventListener("resize", () => {
+          timelineLine.style.width = `${timeline.scrollWidth}px`;
+        });
       } catch (err) {
-        console.error("Timeline fetch failed:", err);
+        console.error("GraphQL fetch failed:", err);
+        document.getElementById("timeline").innerHTML =
+          "<p class='text-red-500 text-center'>❌ Failed to load events.</p>";
       }
     }
 
     const scrollContainer = document.getElementById("timeline");
     document.getElementById("scrollLeft").onclick = () =>
-      scrollContainer.scrollBy({ left: -window.innerWidth * 0.9, behavior: "smooth" });
+      scrollContainer.scrollBy({
+        left: -window.innerWidth * 0.9,
+        behavior: "smooth",
+      });
     document.getElementById("scrollRight").onclick = () =>
-      scrollContainer.scrollBy({ left: window.innerWidth * 0.9, behavior: "smooth" });
+      scrollContainer.scrollBy({
+        left: window.innerWidth * 0.9,
+        behavior: "smooth",
+      });
 
     fetchItineraryData();
   </script>
-
 </body>
 </html>
