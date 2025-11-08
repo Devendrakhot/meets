@@ -160,7 +160,7 @@
           </h4>
 
           <p id="swamiji-title"
-            class="text-secondary font-semibold text-base md:text-xl uppercase">
+            class="text-[#DAA864] font-semibold text-base md:text-xl uppercase">
             Please wait
           </p>
 
@@ -253,6 +253,7 @@
               page_blocks {
                 view_template
                 page_block_title
+                page_block_short_text
                 block_detail {
                   info_title
                   info_short_text
@@ -289,7 +290,7 @@
         if (!detail) return;
 
         document.getElementById("swamiji-name").innerText = swamijiBlock.page_block_title || "";
-        document.getElementById("swamiji-title").innerText = detail.info_short_text || "";
+        document.getElementById("swamiji-title").innerText = swamijiBlock.page_block_short_text ;
         document.getElementById("swamiji-desc").innerHTML = detail.info_description || "";
 
         const imgUrl = getMediaUrl(detail.media);
