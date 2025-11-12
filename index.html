@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +11,41 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Domine:wght@400;700&family=Anek Latin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    /* Hide Scrollbar */
+    :root {
+      --primary-color: #2A0001;
+      --secondary-color: #DAA864;
+    }
+
+    body {
+      font-family: 'Anek Latin', sans-serif;
+      color: var(--primary-color);
+      background: white;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .font-primary {
+      font-family: 'Domine', sans-serif;
+      color: var(--primary-color);
+    }
+
+    .text-primary {
+      color: var(--primary-color);
+    }
+
+    .text-secondary {
+      color: var(--secondary-color);
+    }
+
+    /* === Timeline Styling === */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -21,21 +55,19 @@
       scrollbar-width: none;
     }
 
-    /* Timeline Styling */
     .timeline-dot {
-      background: #2A0001;
+      background: var(--primary-color);
       width: 1.25rem;
       height: 1.25rem;
       border-radius: 50%;
       position: relative;
       top: 2px;
-      /* Align the dot perfectly with the date text */
       z-index: 10;
       flex-shrink: 0;
     }
 
     .timeline-line {
-      background: #B2A8A0;
+      background: var(--secondary-color);
       height: 4px;
       position: absolute;
       top: 42px;
@@ -43,18 +75,16 @@
       z-index: 0;
     }
 
-    /* Card Styling */
     .card {
-
       border-radius: 0.75rem;
       overflow: hidden;
       background: white;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+    
     }
 
-    /* Timeline container */
     #timeline {
       display: flex;
       overflow-x: auto;
@@ -62,21 +92,14 @@
       width: 100%;
       justify-content: space-between;
       padding: 2rem 2.6rem;
-      /* reduced padding */
       position: relative;
       box-sizing: border-box;
     }
 
-    .timeline-date {
-      margin-top: 6px;
-    }
-
-    /* Each timeline item — show 5 cards per row on desktop */
     #timeline>div {
       scroll-snap-align: center;
       flex-shrink: 0;
       width: calc(19% - 1.3rem);
-      /* narrower so all 5 fit */
       margin: 0 1.3rem;
       z-index: 1;
       display: flex;
@@ -84,19 +107,15 @@
       align-items: center;
     }
 
-
-    /* ✅ Responsive Adjustments */
     @media (max-width: 1280px) {
       #timeline>div {
         width: calc(25% - 2rem);
-        /* 4 per view */
       }
     }
 
     @media (max-width: 1024px) {
       #timeline>div {
         width: calc(33.33% - 2rem);
-        /* 3 per view */
       }
     }
 
@@ -107,90 +126,78 @@
 
       #timeline>div {
         width: 80%;
-        /* 1 per view on mobile */
         margin: 0 1rem;
       }
 
-      .card img {
-        height: 220px;
-        width: 100%;
-        object-fit: cover;
-        border-bottom: 1px solid #eee;
-      }
-
       .timeline-dot {
-        background: #2A0001;
         width: 18px;
         height: 18px;
-        border-radius: 50%;
-        position: relative;
-        z-index: 10;
-        margin-bottom: 10px;
-      }
-
-      .timeline-date {
-        margin-top: 6px;
-
       }
 
       .timeline-line {
         top: 35px;
       }
-
-      #scrollLeft,
-      #scrollRight {
-        bottom: -3rem;
-        top: auto;
-        width: 2.5rem;
-        height: 2.5rem;
-      }
-
-      #scrollLeft {
-        left: 20%;
-      }
-
-      #scrollRight {
-        right: 20%;
-      }
-
-      h2 {
-        font-size: 1.4rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      #timeline>div {
-        width: 90%;
-        margin: 0 0.75rem;
-      }
-
-      .card img {
-        height: 180px;
-      }
-
-      .card .p-3 {
-        padding: 0.75rem;
-      }
-
-      h4 {
-        font-size: 0.9rem;
-      }
-
-      .text-xs {
-        font-size: 0.7rem;
-      }
-
-      .timeline-dot {
-        margin-bottom: 2rem;
-      }
     }
   </style>
-
-
-
 </head>
 
-<body class="bg-white text-[#0f254a] font-sans">
+<body>
+
+  <!-- 🌟 Meet Swamiji Profile Section -->
+  <section class="max-w-[1250px] mx-auto pt-20 pb-10 md:py-20 px-4">
+    <div class="md:flex justify-center gap-[60px] items-stretch">
+      <!-- Image -->
+      <div id="swamiji-image"
+        class="max-w-[600px] flex-1 aspect-[3/2] flex items-center justify-center bg-gray-100 rounded-3xl">
+        <p class="text-secondary text-center">Loading image...</p>
+      </div>
+
+      <!-- Content -->
+      <div class="max-w-[652px] flex flex-col justify-between flex-1 mt-6 md:mt-0 py-4">
+        <div class="flex flex-col gap-4">
+          <h4 id="swamiji-name"
+            class="text-primary font-bold text-2xl md:text-[40px] md:leading-[46px] font-primary">
+            Loading...
+          </h4>
+
+          <p id="swamiji-title"
+            class="text-[#DAA864] font-semibold text-base md:text-xl uppercase">
+            Please wait
+          </p>
+
+          <p id="swamiji-desc"
+            class="text-primary text-sm md:text-lg md:leading-7 text-justify">
+            Fetching content from Chinmaya Mission CMS...
+          </p>
+        </div>
+
+        <!-- Social Links -->
+        <div class="flex items-center gap-6 mt-6">
+          <strong class="text-primary font-bold text-xl md:text-2xl font-primary">Follow on</strong>
+          <div class="flex gap-4" id="swamiji-socials">
+            <a target="_blank" href="https://www.facebook.com/share/16YxYGW9pH/?mibextid=wwXIfr">
+              <img src="https://www.chinmayamission.com/images/Home-page/facebook.svg" alt="Facebook"
+                class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300" />
+            </a>
+            <a target="_blank" href="https://www.instagram.com/swamiswaroopananda?igsh=aTFzOXpjMmdkY3kw">
+              <img src="https://www.chinmayamission.com/images/Home-page/instagram.svg" alt="Instagram"
+                class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300" />
+            </a>
+            <a target="_blank" href="https://x.com/swswaroopananda?s=21">
+              <img src="https://www.chinmayamission.com/images/Home-page/twitter.svg" alt="Twitter"
+                class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300" />
+            </a>
+            <a target="_blank" href="https://whatsapp.com/channel/0029Val828lDZ4LhFJxe801v">
+              <img src="https://www.chinmayamission.com/images/Home-page/whatsAppIcon.svg" alt="WhatsApp"
+                class="w-8 h-8 md:w-10 md:h-10 hover:scale-110 transition-transform duration-300" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🌍 Swamiji's Event Timeline -->
   <section class="py-16 w-full">
     <!-- Header -->
     <div class="text-center mb-10 px-6">
@@ -227,7 +234,82 @@
     </div>
   </section>
 
-  <script type="module">
+
+  <!-- ======================= -->
+  <!-- 🔹 FETCH DATA SCRIPTS 🔹 -->
+  <!-- ======================= -->
+  <script>
+    /* === Swamiji Bio Fetch === */
+    const CMS_API = "https://cms.chinmayamission.com/graphql";
+    const BASE_URL = "https://cms.chinmayamission.com";
+    const slug = "/";
+
+    const cmsQuery = `
+      query {
+        pages(filters: { slug: { eq: "${slug}" } }) {
+          slug
+          contentSections {
+            __typename
+            ... on ComponentSectionsPageBlockGroup {
+              page_blocks {
+                view_template
+                page_block_title
+                page_block_short_text
+                block_detail {
+                  info_title
+                  info_short_text
+                  info_description
+                  media { url }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    function getMediaUrl(media) {
+      if (!media) return "";
+      if (typeof media === "string") return media.startsWith("/") ? BASE_URL + media : media;
+      if (media.url) return media.url.startsWith("/") ? BASE_URL + media.url : media.url;
+      return "";
+    }
+
+    async function loadSwamijiProfile() {
+      try {
+        const res = await axios.post(CMS_API, { query: cmsQuery });
+        const page = res.data?.data?.pages?.[0];
+        if (!page) return;
+
+        const blocks = page.contentSections
+          .filter(cs => cs.__typename === "ComponentSectionsPageBlockGroup")
+          .flatMap(cs => cs.page_blocks)
+          .filter(b => (b.view_template || "").toLowerCase().includes("one_1048"));
+
+        const swamijiBlock = blocks[1];
+        const detail = swamijiBlock?.block_detail?.[0];
+        if (!detail) return;
+
+        document.getElementById("swamiji-name").innerText = swamijiBlock.page_block_title || "";
+        document.getElementById("swamiji-title").innerText = swamijiBlock.page_block_short_text ;
+        document.getElementById("swamiji-desc").innerHTML = detail.info_description || "";
+
+        const imgUrl = getMediaUrl(detail.media);
+        if (imgUrl) {
+          document.getElementById("swamiji-image").innerHTML = `
+            <img src="${imgUrl}" alt="${detail.info_title || ''}"
+              class="rounded-3xl object-cover w-full h-full shadow-[8px_8px_4px_rgba(0,0,0,0.16)]" />
+          `;
+        }
+      } catch (err) {
+        console.error("Swamiji profile fetch failed:", err);
+      }
+    }
+
+    loadSwamijiProfile();
+  </script>
+
+<script type="module">
     const API_URL = "https://admin.chinmayamission.com/api/graphql";
 
     const query = `
@@ -400,8 +482,5 @@
 
     fetchItineraryData();
   </script>
-
-
 </body>
-
 </html>
